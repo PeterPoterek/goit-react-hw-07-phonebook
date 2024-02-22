@@ -51,10 +51,8 @@ export const phonebookSlice = createSlice({
     error: null,
   },
   reducers: {
-    removeContact: (state, action) => {
-      state.contacts = state.contacts.filter(
-        contact => contact.id !== action.payload
-      );
+    setContacts: (state, action) => {
+      state.contacts = action.payload;
     },
     setFilter: (state, action) => {
       state.filter = action.payload;
@@ -76,10 +74,16 @@ export const phonebookSlice = createSlice({
       .addCase(addContact.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.contacts.push(action.payload);
+      })
+      .addCase(removeContact.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.contacts = state.contacts.filter(
+          contact => contact.id !== action.payload
+        );
       });
   },
 });
 
-export const { setFilter } = phonebookSlice.actions;
+export const { setContacts, setFilter } = phonebookSlice.actions;
 
 export default phonebookSlice.reducer;
