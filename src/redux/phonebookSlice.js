@@ -27,6 +27,21 @@ export const addContact = createAsyncThunk(
   }
 );
 
+export const removeContact = createAsyncThunk(
+  'phonebook/removeContact',
+  async contactId => {
+    const response = await fetch(`${apiUrl}/${contactId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to remove contact');
+    }
+
+    return contactId;
+  }
+);
+
 export const phonebookSlice = createSlice({
   name: 'phonebook',
   initialState: {
@@ -65,6 +80,6 @@ export const phonebookSlice = createSlice({
   },
 });
 
-export const { removeContact, setFilter } = phonebookSlice.actions;
+export const { setFilter } = phonebookSlice.actions;
 
 export default phonebookSlice.reducer;
