@@ -1,8 +1,9 @@
+import React, { useEffect } from 'react';
 import ContactListItem from 'components/ContactListItem/ContactListItem.jsx';
 import { ContactListContainer, ContactListUl } from './ContactListStyles';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { removeContact } from '../../redux/phonebookSlice.js';
+import { fetchContacts, removeContact } from '../../redux/phonebookSlice.js';
 import { selectContacts, selectFilter } from '../../redux/selectors.js';
 
 const ContactList = () => {
@@ -10,12 +11,18 @@ const ContactList = () => {
   const contacts = useSelector(selectContacts);
   const filter = useSelector(selectFilter);
 
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   const handleRemoveContact = contactId => {
     dispatch(removeContact(contactId));
   };
+
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(filter.toLowerCase())
   );
+
   return (
     <ContactListContainer>
       <ContactListUl>
