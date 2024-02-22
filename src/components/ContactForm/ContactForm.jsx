@@ -15,7 +15,7 @@ const ContactForm = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(selectContacts);
 
-  const handleFormSubmit = e => {
+  const handleFormSubmit = async e => {
     e.preventDefault();
 
     const nameInput = e.target[0];
@@ -26,31 +26,33 @@ const ContactForm = () => {
     const numberInputValue = numberInput.value;
     const numberPattern = new RegExp(numberInput.pattern);
 
-    const isContactExists = contacts.some(
+    const isFormDataValid =
+      namePattern.test(nameInputValue) && numberPattern.test(numberInputValue);
+
+    const isDuplicateName = contacts.some(
       contact => contact.name.toLowerCase() === nameInputValue.toLowerCase()
     );
 
-    if (
-      namePattern.test(nameInputValue) &&
-      numberPattern.test(numberInputValue) &&
-      !isContactExists
-    ) {
+    if (isFormDataValid && !isDuplicateName) {
       const newContact = {
-        id: `id-${nanoid()}`,
+        id: nanoid(),
         name: nameInputValue,
         number: numberInputValue,
       };
 
-      dispatch(addContact(newContact));
+      await dispatch(addContact(newContact));
     } else {
-      const errorMessage = isContactExists
+      const errorMessage = isDuplicateName
         ? `${nameInputValue} is already in contacts.`
-        : namePattern.test(nameInputValue)
-        ? numberInput.title
+        : isFormDataValid
+        ? 'Invalid form data. Please check the input fields.'
         : nameInput.title;
 
       alert(errorMessage);
     }
+
+    nameInput.value = '';
+    numberInput.value = '';
   };
 
   return (

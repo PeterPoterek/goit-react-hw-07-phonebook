@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import ContactListItem from 'components/ContactListItem/ContactListItem.jsx';
 import { ContactListContainer, ContactListUl } from './ContactListStyles';
 

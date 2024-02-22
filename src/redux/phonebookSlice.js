@@ -11,6 +11,22 @@ export const fetchContacts = createAsyncThunk(
   }
 );
 
+export const addContact = createAsyncThunk(
+  'phonebook/addContact',
+  async newContact => {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newContact),
+    });
+
+    const data = await response.json();
+    return data;
+  }
+);
+
 export const phonebookSlice = createSlice({
   name: 'phonebook',
   initialState: {
@@ -20,9 +36,6 @@ export const phonebookSlice = createSlice({
     error: null,
   },
   reducers: {
-    addContact: (state, action) => {
-      state.contacts.push(action.payload);
-    },
     removeContact: (state, action) => {
       state.contacts = state.contacts.filter(
         contact => contact.id !== action.payload
@@ -44,10 +57,14 @@ export const phonebookSlice = createSlice({
       .addCase(fetchContacts.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+      })
+      .addCase(addContact.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.contacts.push(action.payload);
       });
   },
 });
 
-export const { addContact, removeContact, setFilter } = phonebookSlice.actions;
+export const { removeContact, setFilter } = phonebookSlice.actions;
 
 export default phonebookSlice.reducer;
