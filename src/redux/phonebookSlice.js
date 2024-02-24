@@ -10,7 +10,6 @@ export const fetchContacts = createAsyncThunk(
     return data;
   }
 );
-//
 export const addContact = createAsyncThunk(
   'phonebook/addContact',
   async newContact => {
