@@ -70,15 +70,29 @@ export const phonebookSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
+      .addCase(addContact.pending, state => {
+        state.status = 'loading';
+      })
       .addCase(addContact.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.contacts.push(action.payload);
+      })
+      .addCase(addContact.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(removeContact.pending, state => {
+        state.status = 'loading';
       })
       .addCase(removeContact.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.contacts = state.contacts.filter(
           contact => contact.id !== action.payload
         );
+      })
+      .addCase(removeContact.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
       });
   },
 });
