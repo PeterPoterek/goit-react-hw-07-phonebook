@@ -2,6 +2,20 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiUrl = 'https://65d4dd133f1ab8c6343627d8.mockapi.io/contacts';
 
+const handlePending = state => {
+  state.status = 'loading';
+};
+
+const handleFulfilled = (state, action) => {
+  state.status = 'succeeded';
+  state.contacts = action.payload;
+};
+
+const handleRejected = (state, action) => {
+  state.status = 'failed';
+  state.error = action.error.message;
+};
+
 export const fetchContacts = createAsyncThunk(
   'phonebook/fetchContacts',
   async () => {
@@ -10,6 +24,7 @@ export const fetchContacts = createAsyncThunk(
     return data;
   }
 );
+
 export const addContact = createAsyncThunk(
   'phonebook/addContact',
   async newContact => {
@@ -58,42 +73,38 @@ export const phonebookSlice = createSlice({
     },
   },
   extraReducers: builder => {
+    const handlePending = state => {
+      state.status = 'loading';
+    };
+
+    const handleFulfilled = (state, action) => {
+      state.status = 'succeeded';
+      state.contacts = action.payload;
+    };
+
+    const handleRejected = (state, action) => {
+      state.status = 'failed';
+      state.error = action.error.message;
+    };
+
     builder
-      .addCase(fetchContacts.pending, state => {
-        state.status = 'loading';
-      })
-      .addCase(fetchContacts.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.contacts = action.payload;
-      })
-      .addCase(fetchContacts.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
-      .addCase(addContact.pending, state => {
-        state.status = 'loading';
-      })
+      .addCase(fetchContacts.pending, handlePending)
+      .addCase(fetchContacts.fulfilled, handleFulfilled)
+      .addCase(fetchContacts.rejected, handleRejected)
+      .addCase(addContact.pending, handlePending)
       .addCase(addContact.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.contacts.push(action.payload);
       })
-      .addCase(addContact.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
-      .addCase(removeContact.pending, state => {
-        state.status = 'loading';
-      })
+      .addCase(addContact.rejected, handleRejected)
+      .addCase(removeContact.pending, handlePending)
       .addCase(removeContact.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.contacts = state.contacts.filter(
           contact => contact.id !== action.payload
         );
       })
-      .addCase(removeContact.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
+      .addCase(removeContact.rejected, handleRejected);
   },
 });
 
